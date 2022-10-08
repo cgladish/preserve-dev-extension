@@ -1,7 +1,6 @@
 module.exports = {
   webpack: {
     configure: (webpackConfig, { env, paths }) => {
-      console.log(webpackConfig.plugins);
       webpackConfig.plugins[4].options.filename = "static/css/[name].css";
       return {
         ...webpackConfig,

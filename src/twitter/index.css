@@ -1,12 +1,33 @@
-.create-snippet-btn {
+@import "https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap";
+
+.create-snippet-btn-container {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  width: 35px;
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  height: "100%";
+  right: -35px;
+}
+
+.create-snippet-btn-container button {
   background: #a45ee5;
-  color: #eee;
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  border-collapse: 0px;
-  padding: 0;
+  transform: translateX(-35px);
+  transition-duration: 0.25s;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  padding-top: 5px;
+  border-width: 0;
+  border-radius: 0 4px 4px 0;
+}
+.create-snippet-btn-container button:hover {
+  background: #52168b;
+}
+article:hover + .create-snippet-btn-container button {
+  transform: translateX(0px);
+}
+.create-snippet-btn-container button:hover {
+  transform: translateX(0px);
 }
