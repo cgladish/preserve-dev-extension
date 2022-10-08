@@ -1,0 +1,12 @@
+.create-snippet-btn {
+  background: #a45ee5;
+  color: #eee;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-collapse: 0px;
+  padding: 0;
+}

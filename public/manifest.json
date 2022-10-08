@@ -16,6 +16,7 @@
   "content_scripts": [
     {
       "matches": ["http://*.twitter.com/*", "https://*.twitter.com/*"],
+      "css": ["./static/css/twitter.css"],
       "js": ["./static/js/twitter.js"]
     }
   ]
