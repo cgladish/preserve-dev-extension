@@ -13,7 +13,6 @@ const getTweetInfo = (tweetElem: Element): SelectedTweet | undefined => {
     elem.getAttribute("href")?.includes("/status/")
   );
   const splitInfo = link?.getAttribute("href")?.split("/status/");
-  console.log(link);
   return (
     splitInfo && {
       authorUsername: splitInfo[0].slice(1),
@@ -22,11 +21,18 @@ const getTweetInfo = (tweetElem: Element): SelectedTweet | undefined => {
   );
 };
 
+window.addEventListener("popstate", () => {
+  firstSelectedTweet = undefined;
+  lastSelectedTweet = undefined;
+  rerender();
+});
+
 const rerender = () => {
   const tweets = Array.from(document.querySelectorAll("[data-testid=tweet]"));
   if (!firstSelectedTweet) {
     tweets.forEach((tweet) => {
       if (
+        tweet.parentElement &&
         !tweet.parentElement?.getElementsByClassName(
           "create-snippet-btn-container"
         ).length
@@ -41,6 +47,7 @@ const rerender = () => {
         const tweetInfo = getTweetInfo(tweet);
         button.onclick = () => {
           firstSelectedTweet = tweetInfo;
+          lastSelectedTweet = tweetInfo;
           rerender();
         };
 
@@ -71,20 +78,22 @@ const rerender = () => {
       return;
     }
     tweets.forEach((tweet, i) => {
-      const buttonContainerElem = tweet.parentElement?.getElementsByClassName(
-        "create-snippet-btn-container"
-      )[0];
-      if (buttonContainerElem) {
-        buttonContainerElem.remove();
-      }
-      if (
-        lastSelectedTweetIndex
-          ? i >= firstSelectedTweetIndex && i <= lastSelectedTweetIndex
-          : i === firstSelectedTweetIndex
-      ) {
-        tweet.parentElement?.classList.add("selected-tweet");
-      } else {
-        tweet.parentElement?.classList.remove("selected-tweet");
+      if (tweet.parentElement) {
+        const buttonContainerElem = tweet.parentElement.getElementsByClassName(
+          "create-snippet-btn-container"
+        )[0];
+        if (buttonContainerElem) {
+          buttonContainerElem.remove();
+        }
+        if (
+          lastSelectedTweetIndex
+            ? i >= firstSelectedTweetIndex && i <= lastSelectedTweetIndex
+            : i === firstSelectedTweetIndex
+        ) {
+          tweet.parentElement.classList.add("selected-tweet");
+        } else {
+          tweet.parentElement.classList.remove("selected-tweet");
+        }
       }
     });
   }
