@@ -35,3 +35,42 @@ article:hover + .create-snippet-btn-container button {
 .create-snippet-btn-container button:hover {
   transform: translateX(0px);
 }
+
+.change-snippet-selection-container {
+  position: absolute;
+  width: 38px;
+  right: -38px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+}
+.change-snippet-selection-container-first {
+  top: -30px;
+}
+.change-snippet-selection-container-last {
+  bottom: -30px;
+}
+
+.change-snippet-selection-container button {
+  background: rgba(0, 0, 0, 0);
+  border: 0;
+  padding: 2px 5px;
+  cursor: pointer;
+  height: 30px;
+  transition-duration: 0.25s;
+}
+.change-snippet-selection-container button svg {
+  filter: invert(42%) sepia(98%) saturate(3141%) hue-rotate(246deg)
+    brightness(101%) contrast(80%);
+}
+.change-snippet-selection-container button:hover svg {
+  filter: invert(16%) sepia(37%) saturate(4847%) hue-rotate(260deg)
+    brightness(93%) contrast(109%);
+}
+.change-snippet-selection-button-up {
+  border-radius: 4px 4px 0 0;
+}
+.change-snippet-selection-button-down {
+  border-radius: 0 0 4px 4px;
+  margin-top: auto;
+}

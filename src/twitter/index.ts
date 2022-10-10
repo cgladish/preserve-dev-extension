@@ -5,7 +5,10 @@ type SelectedTweet = {
   authorUsername: string;
 };
 
+let prevFirstSelectedTweetIndex: number | undefined = undefined;
 let firstSelectedTweet: SelectedTweet | undefined = undefined;
+
+let prevLastSelectedTweetIndex: number | undefined = undefined;
 let lastSelectedTweet: SelectedTweet | undefined = undefined;
 
 const getTweetInfo = (tweetElem: Element): SelectedTweet | undefined => {
@@ -21,15 +24,78 @@ const getTweetInfo = (tweetElem: Element): SelectedTweet | undefined => {
   );
 };
 
-window.addEventListener("popstate", () => {
-  firstSelectedTweet = undefined;
-  lastSelectedTweet = undefined;
-  rerender();
-});
+const svgRemove =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="30" viewBox="0 0 48 48"><path d="M10 25.5v-3h28v3Z"/></svg>';
+const svgAdd =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="30" viewBox="0 0 48 48"><path d="M22.5 38V25.5H10v-3h12.5V10h3v12.5H38v3H25.5V38Z"/></svg>';
+const addChangeSelectionButtons = (
+  tweetElem: Element,
+  first: boolean,
+  showUpButton: boolean,
+  showDownButton: boolean,
+  onClickUp: () => void,
+  onClickDown: () => void
+): void => {
+  const containerClass = first
+    ? "change-snippet-selection-container-first"
+    : "change-snippet-selection-container-last";
+  const selectedButtonContainer = document.createElement("div");
+  selectedButtonContainer.setAttribute(
+    "class",
+    `change-snippet-selection-container ${containerClass}`
+  );
+  tweetElem.parentElement?.appendChild(selectedButtonContainer);
+
+  if (showUpButton) {
+    const button = document.createElement("button");
+    button.setAttribute("class", "change-snippet-selection-button-up");
+    button.innerHTML = first ? svgAdd : svgRemove;
+    button.onclick = () => {
+      onClickUp();
+      rerender();
+    };
+    selectedButtonContainer.appendChild(button);
+  }
+  if (showDownButton) {
+    const button = document.createElement("button");
+    button.setAttribute("class", "change-snippet-selection-button-down");
+    button.innerHTML = first ? svgRemove : svgAdd;
+    button.onclick = () => {
+      onClickDown();
+      rerender();
+    };
+    selectedButtonContainer.appendChild(button);
+  }
+};
 
 const rerender = () => {
   const tweets = Array.from(document.querySelectorAll("[data-testid=tweet]"));
-  if (!firstSelectedTweet) {
+  const firstSelectedTweetIndex = tweets.findIndex((tweet) => {
+    const tweetInfo = getTweetInfo(tweet);
+    return tweetInfo?.id === firstSelectedTweet?.id;
+  });
+  const lastSelectedTweetIndex = tweets.findIndex((tweet) => {
+    const tweetInfo = getTweetInfo(tweet);
+    return tweetInfo?.id === lastSelectedTweet?.id;
+  });
+  if (
+    prevFirstSelectedTweetIndex !== firstSelectedTweetIndex ||
+    prevLastSelectedTweetIndex !== lastSelectedTweetIndex
+  ) {
+    tweets.forEach((tweet) => {
+      if (tweet.parentElement) {
+        Array.from(
+          tweet.parentElement.getElementsByClassName(
+            "change-snippet-selection-container"
+          )
+        ).forEach((buttonContainer) => buttonContainer.remove());
+      }
+    });
+  }
+  prevFirstSelectedTweetIndex = firstSelectedTweetIndex;
+  prevLastSelectedTweetIndex = lastSelectedTweetIndex;
+
+  if (!firstSelectedTweet || !lastSelectedTweet) {
     tweets.forEach((tweet) => {
       if (
         tweet.parentElement &&
@@ -55,28 +121,6 @@ const rerender = () => {
       }
     });
   } else {
-    const firstSelectedTweetIndex = tweets.findIndex((tweet) => {
-      const tweetInfo = getTweetInfo(tweet);
-      return (
-        tweetInfo?.id === firstSelectedTweet?.id &&
-        tweetInfo?.authorUsername === firstSelectedTweet?.authorUsername
-      );
-    });
-    if (firstSelectedTweetIndex === -1) {
-      return;
-    }
-    const lastSelectedTweetIndex =
-      lastSelectedTweet &&
-      tweets.findIndex((tweet) => {
-        const tweetInfo = getTweetInfo(tweet);
-        return (
-          tweetInfo?.id === lastSelectedTweet?.id &&
-          tweetInfo?.authorUsername === lastSelectedTweet?.authorUsername
-        );
-      });
-    if (lastSelectedTweetIndex === -1) {
-      return;
-    }
     tweets.forEach((tweet, i) => {
       if (tweet.parentElement) {
         const buttonContainerElem = tweet.parentElement.getElementsByClassName(
@@ -86,9 +130,11 @@ const rerender = () => {
           buttonContainerElem.remove();
         }
         if (
-          lastSelectedTweetIndex
-            ? i >= firstSelectedTweetIndex && i <= lastSelectedTweetIndex
-            : i === firstSelectedTweetIndex
+          (i >= firstSelectedTweetIndex ||
+            (firstSelectedTweetIndex === -1 &&
+              lastSelectedTweetIndex !== -1)) &&
+          (i <= lastSelectedTweetIndex ||
+            (lastSelectedTweetIndex === -1 && firstSelectedTweetIndex !== -1))
         ) {
           tweet.parentElement.classList.add("selected-tweet");
         } else {
@@ -96,6 +142,49 @@ const rerender = () => {
         }
       }
     });
+
+    if (
+      firstSelectedTweetIndex !== -1 &&
+      !tweets[firstSelectedTweetIndex].parentElement?.getElementsByClassName(
+        "change-snippet-selection-container-first"
+      ).length
+    ) {
+      addChangeSelectionButtons(
+        tweets[firstSelectedTweetIndex],
+        true,
+        firstSelectedTweetIndex > 0,
+        firstSelectedTweetIndex < lastSelectedTweetIndex,
+        () => {
+          firstSelectedTweet = getTweetInfo(
+            tweets[firstSelectedTweetIndex - 1]
+          );
+        },
+        () => {
+          firstSelectedTweet = getTweetInfo(
+            tweets[firstSelectedTweetIndex + 1]
+          );
+        }
+      );
+    }
+    if (
+      lastSelectedTweetIndex !== -1 &&
+      !tweets[lastSelectedTweetIndex].parentElement?.getElementsByClassName(
+        "change-snippet-selection-container-last"
+      ).length
+    ) {
+      addChangeSelectionButtons(
+        tweets[lastSelectedTweetIndex],
+        false,
+        lastSelectedTweetIndex > firstSelectedTweetIndex,
+        lastSelectedTweetIndex < tweets.length - 1,
+        () => {
+          lastSelectedTweet = getTweetInfo(tweets[lastSelectedTweetIndex - 1]);
+        },
+        () => {
+          lastSelectedTweet = getTweetInfo(tweets[lastSelectedTweetIndex + 1]);
+        }
+      );
+    }
   }
 };
 
@@ -105,6 +194,12 @@ observer.observe(document, {
   childList: true,
   characterData: false,
   subtree: true,
+});
+
+window.addEventListener("popstate", () => {
+  firstSelectedTweet = undefined;
+  lastSelectedTweet = undefined;
+  rerender();
 });
 
 export {};
