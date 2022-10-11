@@ -142,11 +142,6 @@ const rerender = () => {
       const innerDiv = document.createElement("div");
       snippetConfirmCancel.appendChild(innerDiv);
 
-      const confirmButton = document.createElement("button");
-      confirmButton.setAttribute("class", "snippet-confirm-button");
-      confirmButton.innerHTML = "PRESERVE IT!";
-      innerDiv.appendChild(confirmButton);
-
       const cancelButton = document.createElement("button");
       cancelButton.setAttribute("class", "snippet-cancel-button");
       cancelButton.innerHTML = "CANCEL";
@@ -156,6 +151,19 @@ const rerender = () => {
         rerender();
       };
       innerDiv.appendChild(cancelButton);
+
+      const confirmButton = document.createElement("button");
+      confirmButton.setAttribute("class", "snippet-confirm-button");
+      confirmButton.innerHTML = "PRESERVE IT!";
+      confirmButton.onclick = () => {
+        chrome.runtime.sendMessage({
+          type: "CREATE_SNIPPET",
+          tweets: Object.values(tweets),
+        });
+        firstSelectedTweet = undefined;
+        lastSelectedTweet = undefined;
+      };
+      innerDiv.appendChild(confirmButton);
 
       const bodyElem = document.getElementsByTagName("body")[0];
       bodyElem?.appendChild(snippetConfirmCancel);
