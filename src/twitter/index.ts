@@ -205,7 +205,8 @@ const rerender = () => {
         tweets[firstSelectedTweetIndex],
         true,
         firstSelectedTweetIndex > 0,
-        firstSelectedTweetIndex < lastSelectedTweetIndex,
+        firstSelectedTweetIndex < lastSelectedTweetIndex ||
+          lastSelectedTweetIndex === -1,
         () => {
           firstSelectedTweet = getTweetInfo(
             tweets[firstSelectedTweetIndex - 1]
@@ -227,7 +228,8 @@ const rerender = () => {
       addChangeSelectionButtons(
         tweets[lastSelectedTweetIndex],
         false,
-        lastSelectedTweetIndex > firstSelectedTweetIndex,
+        lastSelectedTweetIndex > firstSelectedTweetIndex ||
+          firstSelectedTweetIndex === -1,
         lastSelectedTweetIndex < tweets.length - 1,
         () => {
           lastSelectedTweet = getTweetInfo(tweets[lastSelectedTweetIndex - 1]);
