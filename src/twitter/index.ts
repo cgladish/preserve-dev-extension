@@ -11,6 +11,8 @@ let firstSelectedTweet: SelectedTweet | undefined = undefined;
 let prevLastSelectedTweetIndex: number | undefined = undefined;
 let lastSelectedTweet: SelectedTweet | undefined = undefined;
 
+const allSelectedTweets: { [id: string]: SelectedTweet } = {};
+
 let snippetConfirmCancel: Element | undefined = undefined;
 
 const getTweetInfo = (tweetElem: Element): SelectedTweet | undefined => {
@@ -157,6 +159,7 @@ const rerender = () => {
         if (buttonContainerElem) {
           buttonContainerElem.remove();
         }
+        const tweetInfo = getTweetInfo(tweet);
         if (
           (i >= firstSelectedTweetIndex ||
             (firstSelectedTweetIndex === -1 &&
@@ -165,11 +168,19 @@ const rerender = () => {
             (lastSelectedTweetIndex === -1 && firstSelectedTweetIndex !== -1))
         ) {
           tweet.parentElement.classList.add("selected-tweet");
+          if (tweetInfo) {
+            allSelectedTweets[tweetInfo.id] = tweetInfo;
+          }
         } else {
           tweet.parentElement.classList.remove("selected-tweet");
+          if (tweetInfo) {
+            delete allSelectedTweets[tweetInfo.id];
+          }
         }
       }
     });
+
+    console.log(allSelectedTweets);
 
     if (
       firstSelectedTweetIndex !== -1 &&
@@ -224,10 +235,13 @@ observer.observe(document, {
   subtree: true,
 });
 
-window.addEventListener("popstate", () => {
-  firstSelectedTweet = undefined;
-  lastSelectedTweet = undefined;
-  rerender();
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  console.log(request);
+  if (request.url) {
+    firstSelectedTweet = undefined;
+    lastSelectedTweet = undefined;
+    rerender();
+  }
 });
 
 export {};
