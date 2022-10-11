@@ -38,7 +38,7 @@ article:hover + .create-snippet-btn-container button {
 
 .change-snippet-selection-container {
   position: absolute;
-  width: 38px;
+  width: 35px;
   right: -38px;
   height: 60px;
   display: flex;
@@ -52,20 +52,20 @@ article:hover + .create-snippet-btn-container button {
 }
 
 .change-snippet-selection-container button {
-  background: rgba(0, 0, 0, 0);
+  background: rgba(255, 255, 255, 0);
+  transition-duration: 0.25s;
   border: 0;
-  padding: 2px 5px;
+  padding: 0;
+  border-radius: 4px;
   cursor: pointer;
   height: 30px;
-  transition-duration: 0.25s;
 }
 .change-snippet-selection-container button svg {
   filter: invert(42%) sepia(98%) saturate(3141%) hue-rotate(246deg)
     brightness(101%) contrast(80%);
 }
-.change-snippet-selection-container button:hover svg {
-  filter: invert(16%) sepia(37%) saturate(4847%) hue-rotate(260deg)
-    brightness(93%) contrast(109%);
+.change-snippet-selection-container button:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 .change-snippet-selection-button-up {
   border-radius: 4px 4px 0 0;
@@ -73,4 +73,47 @@ article:hover + .create-snippet-btn-container button {
 .change-snippet-selection-button-down {
   border-radius: 0 0 4px 4px;
   margin-top: auto;
+}
+
+.snippet-confirm-cancel {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 4px;
+  padding: 15px 20px;
+  background: rgb(35, 35, 35);
+  box-shadow: rgb(0 0 0 / 20%) 0px 5px 5px -3px,
+    rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px;
+}
+.snippet-confirm-cancel button {
+  padding: 8px 22px;
+  cursor: pointer;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  transition-duration: 0.25s;
+  border-radius: 4px;
+}
+
+.snippet-cancel-button {
+  border-width: 0;
+  color: #a45ee5;
+  background: rgba(255, 255, 255, 0);
+}
+.snippet-cancel-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  text-decoration: underline;
+}
+
+.snippet-confirm-button {
+  border-width: 0;
+  color: #eee;
+  background: #a45ee5;
+  margin-bottom: 5px;
+}
+.snippet-confirm-button:hover {
+  background: #52168b;
 }
