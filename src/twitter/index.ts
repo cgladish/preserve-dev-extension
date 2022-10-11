@@ -133,10 +133,19 @@ const rerender = () => {
       snippetConfirmCancel = document.createElement("div");
       snippetConfirmCancel.setAttribute("class", "snippet-confirm-cancel");
 
+      const messagesText = document.createElement("p");
+      messagesText.innerHTML = `${
+        Object.keys(allSelectedTweets).length
+      } selected`;
+      snippetConfirmCancel.appendChild(messagesText);
+
+      const innerDiv = document.createElement("div");
+      snippetConfirmCancel.appendChild(innerDiv);
+
       const confirmButton = document.createElement("button");
       confirmButton.setAttribute("class", "snippet-confirm-button");
       confirmButton.innerHTML = "PRESERVE IT!";
-      snippetConfirmCancel.appendChild(confirmButton);
+      innerDiv.appendChild(confirmButton);
 
       const cancelButton = document.createElement("button");
       cancelButton.setAttribute("class", "snippet-cancel-button");
@@ -146,10 +155,16 @@ const rerender = () => {
         lastSelectedTweet = undefined;
         rerender();
       };
-      snippetConfirmCancel.appendChild(cancelButton);
+      innerDiv.appendChild(cancelButton);
 
       const bodyElem = document.getElementsByTagName("body")[0];
       bodyElem?.appendChild(snippetConfirmCancel);
+    } else {
+      const messagesText = snippetConfirmCancel.getElementsByTagName("p")[0];
+      const text = `${Object.keys(allSelectedTweets).length} selected`;
+      if (messagesText.innerHTML !== text) {
+        messagesText.innerHTML = text;
+      }
     }
     tweets.forEach((tweet, i) => {
       if (tweet.parentElement) {
@@ -179,8 +194,6 @@ const rerender = () => {
         }
       }
     });
-
-    console.log(allSelectedTweets);
 
     if (
       firstSelectedTweetIndex !== -1 &&
@@ -236,7 +249,6 @@ observer.observe(document, {
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(request);
   if (request.url) {
     firstSelectedTweet = undefined;
     lastSelectedTweet = undefined;

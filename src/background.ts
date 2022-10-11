@@ -1,8 +1,10 @@
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.url) {
-    chrome.tabs.sendMessage(tabId, {
-      url: changeInfo.url,
-    });
+    try {
+      await chrome.tabs.sendMessage(tabId, {
+        url: changeInfo.url,
+      });
+    } catch (err) {}
   }
 });
 
