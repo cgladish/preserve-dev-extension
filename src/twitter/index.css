@@ -126,3 +126,16 @@ article:hover + .create-snippet-btn-container button {
 .snippet-confirm-button:hover {
   background: #52168b;
 }
+
+.snippet-cancel-button:disabled,
+.snippet-confirm-button:disabled {
+  cursor: default;
+  text-decoration: none;
+}
+.snippet-cancel-button:disabled {
+  color: #aaa;
+  background: rgba(255, 255, 255, 0);
+}
+.snippet-confirm-button:disabled {
+  background: #aaa;
+}
