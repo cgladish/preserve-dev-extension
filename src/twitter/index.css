@@ -47,10 +47,10 @@ article:hover + .create-snippet-btn-container button {
   flex-direction: column;
 }
 .change-snippet-selection-container-first {
-  top: -30px;
+  top: -35px;
 }
 .change-snippet-selection-container-last {
-  bottom: -30px;
+  bottom: -35px;
 }
 
 .change-snippet-selection-container button {
