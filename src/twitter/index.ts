@@ -72,17 +72,21 @@ const rerender = () => {
     const tweetId = getTweetId(tweet);
     return tweetId === lastSelectedTweetId;
   });
-  if (
-    prevFirstSelectedTweetIndex !== firstSelectedTweetIndex ||
-    prevLastSelectedTweetIndex !== lastSelectedTweetIndex
-  ) {
+  if (prevFirstSelectedTweetIndex !== firstSelectedTweetIndex) {
     tweets.forEach((tweet) => {
       if (tweet.parentElement) {
-        Array.from(
-          tweet.parentElement.getElementsByClassName(
-            "change-snippet-selection-container"
-          )
-        ).forEach((buttonContainer) => buttonContainer.remove());
+        tweet.parentElement
+          .getElementsByClassName("change-snippet-selection-container-first")[0]
+          ?.remove();
+      }
+    });
+  }
+  if (prevLastSelectedTweetIndex !== lastSelectedTweetIndex) {
+    tweets.forEach((tweet) => {
+      if (tweet.parentElement) {
+        tweet.parentElement
+          .getElementsByClassName("change-snippet-selection-container-last")[0]
+          ?.remove();
       }
     });
   }
