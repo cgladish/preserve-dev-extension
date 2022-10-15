@@ -10,6 +10,12 @@ let allSelectedTweets: { [id: string]: string } = {};
 
 let snippetConfirmCancel: Element | undefined = undefined;
 
+const resetSelections = () => {
+  firstSelectedTweetId = undefined;
+  lastSelectedTweetId = undefined;
+  allSelectedTweets = {};
+};
+
 const getTweetId = (tweetElem: Element): string | undefined => {
   const link = Array.from(tweetElem.getElementsByTagName("a")).find((elem) =>
     elem.getAttribute("href")?.includes("/status/")
@@ -140,9 +146,7 @@ const rerender = () => {
       cancelButton.setAttribute("class", "snippet-cancel-button");
       cancelButton.innerHTML = "CANCEL";
       cancelButton.onclick = () => {
-        firstSelectedTweetId = undefined;
-        lastSelectedTweetId = undefined;
-        allSelectedTweets = {};
+        resetSelections();
         rerender();
       };
       innerDiv.appendChild(cancelButton);
@@ -153,18 +157,16 @@ const rerender = () => {
       confirmButton.onclick = async () => {
         cancelButton.setAttribute("disabled", "");
         confirmButton.setAttribute("disabled", "");
-        try {
-          await chrome.runtime.sendMessage({
+        chrome.runtime.sendMessage(
+          {
             type: "CREATE_SNIPPET",
             tweetIds: Object.values(allSelectedTweets),
-          });
-        } catch (err) {
-          console.error(err);
-        }
-        firstSelectedTweetId = undefined;
-        lastSelectedTweetId = undefined;
-        allSelectedTweets = {};
-        rerender();
+          },
+          () => {
+            resetSelections();
+            rerender();
+          }
+        );
       };
       innerDiv.appendChild(confirmButton);
 
@@ -263,8 +265,7 @@ observer.observe(document, {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.url) {
-    firstSelectedTweetId = undefined;
-    lastSelectedTweetId = undefined;
+    resetSelections();
     rerender();
   }
 });
