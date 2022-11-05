@@ -21,7 +21,7 @@ const getTweetId = (tweetElem: Element): string | undefined => {
     elem.getAttribute("href")?.includes("/status/")
   );
   const splitLink = link?.getAttribute("href")?.split("/status/");
-  return splitLink && splitLink[1];
+  return splitLink?.[1]?.split("/")?.[0];
 };
 
 const svgRemove =
