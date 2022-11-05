@@ -78,18 +78,15 @@ const rerender = () => {
     const tweetId = getTweetId(tweet);
     return tweetId === lastSelectedTweetId;
   });
-  if (prevFirstSelectedTweetIndex !== firstSelectedTweetIndex) {
+  if (
+    prevFirstSelectedTweetIndex !== firstSelectedTweetIndex ||
+    prevLastSelectedTweetIndex !== lastSelectedTweetIndex
+  ) {
     tweets.forEach((tweet) => {
       if (tweet.parentElement) {
         tweet.parentElement
           .getElementsByClassName("change-snippet-selection-container-first")[0]
           ?.remove();
-      }
-    });
-  }
-  if (prevLastSelectedTweetIndex !== lastSelectedTweetIndex) {
-    tweets.forEach((tweet) => {
-      if (tweet.parentElement) {
         tweet.parentElement
           .getElementsByClassName("change-snippet-selection-container-last")[0]
           ?.remove();
